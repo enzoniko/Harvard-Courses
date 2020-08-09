@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block main %}
+<h2 class="display-1">Submits</h2>
+<div class="table-responsive table-hover">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Sport</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for submit in submits %}
+            <tr>
+                <td>{{submit[0]}}</td>
+                <td>{{submit[1]}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

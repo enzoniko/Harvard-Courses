@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Pizz4u</title>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'open-iconic-bootstrap.min.css' %}"-->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'animate.css' %}">
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'owl.carousel.min.css' %}">-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/owlcarousel@1.3.3/owl-carousel/owl.carousel.min.css">
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'magnific-popup.css' %}">-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/magnific-popup.css">
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'aos.css' %}">-->
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'ionicons.min.css' %}">-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/ionicons@4.4.6/dist/css/ionicons.min.css">
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'bootstrap-datepicker.css' %}">-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.8.0/dist/js/bootstrap-datepicker.min.js">
+    <!--<link rel="stylesheet" type="text/css" href="{% static 'jquery.timepicker.css' %}">-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/jquery-timepicker@1.3.3/jquery.timepicker.css">
+  </head>
+  <body style="background: url({% static 'bg_4.jpg' %}) no-repeat fixed; background-size: cover;">
+	{% if Category %}
+  	<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+	    <div class="container">
+		    <a class="navbar-brand" href="{% url 'index' %}"></span>Pizz4u<br><small>for you</small></a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="oi oi-menu"></span> Menu
+			</button>
+			{{user.username}} | 
+            {% if user.is_superuser %}
+				<div class="collapse navbar-collapse" id="ftco-nav">
+					<ul class="navbar-nav ml-auto">
+						<li class="nav-item active"><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+						<li class="nav-item"><a href="{% url 'orders_manager' user Order_number %}" class="nav-link">Orders manager</a></li>
+						<li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Log out</a></li>
+					</ul>
+				</div>
+			{% endif %}
+			{% if not user.is_superuser %}
+				<div class="collapse navbar-collapse" id="ftco-nav">
+					<ul class="navbar-nav ml-auto">
+						<li class="nav-item active"><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+						<li class="nav-item"><a href="{% url 'my_orders' Order_number %}" class="nav-link">My orders</a></li>
+						<li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Log out</a></li>
+					</ul>
+				</div>
+			{% endif %}
+		</div>
+    </nav>
+    {% endif %}
+    <!-- END nav -->
+    <p style="margin-bottom: 50px;"></p>
+
+
+    <section class="ftco-about d-md-flex">
+        <div id='my_orders_container' style="background-color: transparent!important;" class='w-50 mx-auto'>
+            <div class=' text-left pr-3'>
+                <ul >
+                    {% for row in All_orders%}
+                    <li id="banana" class='p-2' >
+                        <a href="{% url 'orders_manager' row.user row.order_number  %}"><span>Order no: {{row.order_number}} by {{row.user}}</span></a>
+                        <a href="{% url 'complete_order' row.user row.order_number  %}"><span class='float-right mx-2 p-1 rounded text-white' style="background-color: #f7c264;">Complete order</span></a>
+                        <span class='float-right'>Status: <span class='text-warning'>{{row.status}}</span></span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <ul>
+                <hr style="background-color: #f7c264;">
+                {% for check_cat in Checkout_category %}
+                    <li class='text-right pr-3' style="color: #f7c264;">{{check_cat|cut:"("|cut:")"|cut:","|cut:"'"}}</li>
+                    {% for row in Checkout %}
+                    {% if row.category == check_cat|cut:"("|cut:")"|cut:","|cut:"'"  %}
+                    <li class='pr-3 text-right'>{{row}}&nbsp;</li>
+                    {% endif %}
+                    {% endfor %}
+                {% endfor %} 
+                <hr style="background-color: #f7c264;">
+                <li class='text-right pr-3 ' style="color: #f7c264;"><h1><small class='text-white'>Total</small> ${{Total|floatformat:2}}</h1></li>
+            </ul>
+        </div> 
+    </section>
+    
+    

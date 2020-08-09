@@ -1,0 +1,68 @@
+
+
+<!DOCTYPE html>
+<html lang="zxx" class="no-js">
+<head>
+	<!-- Mobile Specific Meta -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- meta character set -->
+	<meta charset="UTF-8">
+	<!-- Site Title -->
+	<title>NEXT RENT</title>
+
+	<link href="https://fonts.googleapis.com/css?family=Poppins:300,500,600" rel="stylesheet">
+		<!--
+		CSS
+		============================================= -->
+		{% load static %}
+		<link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+		<link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
+		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/owlcarousel@1.3.3/owl-carousel/owl.carousel.min.css">
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="{% static 'nice-select.css' %}">
+		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/magnific-popup.css">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <div class="main-wrapper-first">
+        {% if Category %} <!--If user is loged in-->
+            <header>
+                <div class="container">
+                    <div class="header-wrap">
+                        <div class="header-top d-flex justify-content-between align-items-center">
+                            <div class="logo">
+                                <a href="{% url 'index' %}"><img class="imagem" style="margin-top: 5px;" src="{% static 'logo.png' %}" alt=""></a>
+                            </div>
+                            <div class="main-menubar d-flex align-items-center">
+                                <nav class="hide">
+                                    <a href="#">{{ user.username }}</a>
+                                    <a href="{% url 'index' %}">Home</a>
+                                    <a href="{% url 'cancel'%}">Cancel</a>
+                                    <a href="{% url 'logout' %}">Log out</a>
+                                </nav>
+                                <div class="menu-bar"><span class="lnr lnr-menu"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        {% endif %}
+        <section class="service-area text-center" id="rent">
+            {% if response == "[]"%}
+                <h1 class="text-white">{{message}}</h1>
+            {% elif response != "[]" %}
+                <h1 class="text-white">{{message}}</h1>
+            {% endif %}
+        </section>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.4.0/esm/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxchimp/1.3.0/jquery.ajaxchimp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+    <script src="{% static 'main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>NEXT RENT</title>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	{% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+		<link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
+		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/owlcarousel@1.3.3/owl-carousel/owl.carousel.min.css">
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="{% static 'nice-select.css' %}">
+		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/magnific-popup@1.1.0/dist/magnific-popup.css">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <style>
+body {
+	color: white!important;
+	 font-family: "Open Sans", sans-serif;
+	 margin: 0;
+	 height: 100vh;
+	 display: grid;
+	 place-items: center;
+	 position: relative;
+	 overflow: hidden;
+}
+ .c-checkbox {
+	 display: none;
+}
+ .c-checkbox:nth-of-type(1):checked ~ .c-formContainer .c-form__toggle {
+	 visibility: hidden;
+	 opacity: 0;
+	 transform: scale(0.7);
+}
+ .c-checkbox:nth-of-type(1):checked ~ .c-formContainer .c-form {
+	 width: 382px;
+}
+ .c-checkbox:nth-of-type(1):checked ~ .c-formContainer .c-form .c-form__group:nth-child(1) {
+	 visibility: visible;
+	 opacity: 1;
+}
+ .c-checkbox:nth-of-type(1):checked ~ .c-formContainer .c-form .c-form__group:nth-child(1) .c-form__border {
+	 width: 100%;
+}
+ .c-checkbox:nth-of-type(1):checked ~ .c-formContainer .c-form .c-form__group:nth-child(1) .c-form__input:not(:placeholder-shown):invalid ~ .c-form__border, .c-checkbox:nth-of-type(1):checked ~ .c-formContainer .c-form .c-form__group:nth-child(1) .c-form__input:not(:placeholder-shown):invalid ~ .c-form__next {
+	 color: #f03;
+}
+ .c-checkbox:nth-of-type(1):checked ~ .c-formContainer .c-form .c-form__group:nth-child(1) .c-form__input:required:valid ~ .c-form__next {
+	 pointer-events: initial;
+	 color: #565656;
+}
+ .c-checkbox:nth-of-type(2):checked ~ .c-form__progress {
+	 width: calc(100vw / 3);
+}
+ .c-checkbox:nth-of-type(2):checked ~ .c-formContainer .c-form .c-form__group:nth-child(1) {
+	 visibility: hidden;
+	 opacity: 0;
+}
+ .c-checkbox:nth-of-type(2):checked ~ .c-formContainer .c-form .c-form__group:nth-child(1) .c-form__border {
+	 width: 0;
+}
+ .c-checkbox:nth-of-type(2):checked ~ .c-formContainer .c-form .c-form__group:nth-child(2) {
+	 visibility: visible;
+	 opacity: 1;
+}
+ .c-checkbox:nth-of-type(2):checked ~ .c-formContainer .c-form .c-form__group:nth-child(2) .c-form__border {
+	 width: 100%;
+}
+ .c-checkbox:nth-of-type(2):checked ~ .c-formContainer .c-form .c-form__group:nth-child(2) .c-form__input:not(:placeholder-shown):invalid ~ .c-form__border, .c-checkbox:nth-of-type(2):checked ~ .c-formContainer .c-form .c-form__group:nth-child(2) .c-form__input:not(:placeholder-shown):invalid ~ .c-form__next {
+	 color: #f03;
+}
+ .c-checkbox:nth-of-type(2):checked ~ .c-formContainer .c-form .c-form__group:nth-child(2) .c-form__input:required:valid ~ .c-form__next {
+	 pointer-events: initial;
+	 color: #565656;
+}
+ .c-checkbox:nth-of-type(3):checked ~ .c-form__progress {
+	 width: calc((100vw / 3) + 100vw / 3);
+}
+ .c-checkbox:nth-of-type(3):checked ~ .c-formContainer .c-form .c-form__group:nth-child(2) {
+	 visibility: hidden;
+	 opacity: 0;
+}
+ .c-checkbox:nth-of-type(3):checked ~ .c-formContainer .c-form .c-form__group:nth-child(2) .c-form__border {
+	 width: 0;
+}
+ .c-checkbox:nth-of-type(3):checked ~ .c-formContainer .c-form .c-form__group:nth-child(3) {
+	 visibility: visible;
+	 opacity: 1;
+}
+ .c-checkbox:nth-of-type(3):checked ~ .c-formContainer .c-form .c-form__group:nth-child(3) .c-form__border {
+	 width: 100%;
+}
+ .c-checkbox:nth-of-type(3):checked ~ .c-formContainer .c-form .c-form__group:nth-child(3) .c-form__input:not(:placeholder-shown):invalid ~ .c-form__border, .c-checkbox:nth-of-type(3):checked ~ .c-formContainer .c-form .c-form__group:nth-child(3) .c-form__input:not(:placeholder-shown):invalid ~ .c-form__next {
+	 color: #f03;
+}
+ .c-checkbox:nth-of-type(3):checked ~ .c-formContainer .c-form .c-form__group:nth-child(3) .c-form__input:required:valid ~ .c-form__next {
+	 pointer-events: initial;
+	 color: #565656;
+}
+ #finish:checked ~ .c-form__progress {
+	 width: 100vw;
+}
+ #finish:checked ~ .c-formContainer .c-form {
+	 transition: opacity 0.2s 0.1s, transform 0.3s;
+	 opacity: 0;
+	 transform: translateX(50%) scaleX(0);
+}
+ #finish:checked ~ .c-formContainer .c-form .c-form__group:nth-child(3) {
+	 transition: 0s;
+	 visibility: hidden;
+	 opacity: 0;
+}
+ #finish:checked ~ .c-formContainer .c-form .c-form__group:nth-child(3) .c-form__border {
+	 width: 0;
+}
+ #finish:checked ~ .c-formContainer .c-welcome {
+	 opacity: 1;
+}
+ .c-formContainer {
+	 width: 180px;
+	 height: 65px;
+	 z-index: 1;
+	 display: flex;
+	 justify-content: center;
+}
+ .c-welcome {
+	 position: absolute;
+	 width: max-content;
+	 height: inherit;
+	 font-size: 40px;
+	 color: #fff;
+	 opacity: 0;
+	 transition: 0.3s;
+}
+ .c-form {
+	 border-radius: 1em;;
+	 position: relative;
+	 width: inherit;
+	 height: inherit;
+	 background-image: linear-gradient(to top, #041122 0%, #345066 100%);
+	 box-shadow: 0 5px 10px -2px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+}
+ .c-form__toggle {
+	 width: inherit;
+	 height: inherit;
+	 font-size: 18px;
+	 color: rgb(255, 255, 255);
+	 cursor: pointer;
+	 transition: 0.2s;
+	 display: flex;
+	 align-items: center;
+	 justify-content: center;
+}
+ .c-form__toggleIcon {
+	 display: inline-block;
+	 margin-left: 10px;
+	 position: relative;
+	 width: 15px;
+	 height: 17px;
+}
+ .c-form__toggleIcon::before, .c-form__toggleIcon::after {
+	 content: "";
+	 position: absolute;
+	 background-color: #ffffff;
+}
+ .c-form__toggleIcon::before {
+	 left: 50%;
+	 transform: translateX(-50%);
+	 width: 9px;
+	 height: 9px;
+	 border-radius: 50%;
+}
+ .c-form__toggleIcon::after {
+	 bottom: 0;
+	 width: 100%;
+	 height: 7px;
+	 border-radius: 7px 7px 0 0;
+}
+ .c-form__group {
+	 width: 100%;
+	 height: 100%;
+	 visibility: hidden;
+	 opacity: 0;
+	 padding: 12px 15px;
+	 box-sizing: border-box;
+	 transition: 0.2s 0.2s;
+	 position: absolute;
+}
+ .c-form__label {
+	 position: relative;
+	 cursor: pointer;
+	 width: calc(100% - 40px);
+	 height: 100%;
+	 display: flex;
+	 align-items: flex-end;
+}
+ .c-form__input {
+	 background-color: transparent;
+	 font-size: 20px;
+	 font-family: inherit;
+	 width: 100%;
+	 height: 90%;
+	 border: 0;
+	 outline: 0;
+	 color: rgb(255, 255, 255)!important;
+	 box-sizing: border-box;
+	 cursor: pointer;
+}
+ .c-form__input:focus ~ .c-form__groupLabel, .c-form__input:not(:placeholder-shown) ~ .c-form__groupLabel {
+	 font-size: 10px;
+	 top: -4px;
+	 transform: translateY(0);
+	 color: rgb(255, 255, 255)!important;
+}
+ .c-form__input:focus ~ .c-form__border, .c-form__input:not(:placeholder-shown) ~ .c-form__border, .c-form__input:focus ~ .c-form__next, .c-form__input:not(:placeholder-shown) ~ .c-form__next {
+	 transition: 0.3s;
+}
+ .c-form__input:focus {
+	 cursor: initial;
+}
+ .c-form__groupLabel {
+	 position: absolute;
+	 top: 50%;
+	 transform: translateY(-50%);
+	 transition: 0.2s;
+}
+ .c-form__border {
+	 position: absolute;
+	 width: 0;
+	 height: 3px;
+	 color: #25a3ff;
+	 background-color: currentColor;
+	 transition: 1s 0.2s ease-out;
+}
+ .c-form__next {
+	 color: #25a3ff;
+	 position: absolute;
+	 right: -40px;
+	 height: 100%;
+	 width: 40px;
+	 cursor: pointer;
+	 pointer-events: none;
+	 display: flex;
+	 align-items: center;
+	 justify-content: flex-end;
+}
+ .c-form__nextIcon {
+	 position: relative;
+	 right: 1.5px;
+	 width: 20px;
+	 height: 3px;
+	 background-color: currentColor;
+}
+ .c-form__nextIcon::before, .c-form__nextIcon::after {
+	 content: "";
+	 position: absolute;
+	 right: -1.5px;
+	 width: 15px;
+	 height: 3px;
+	 background-color: inherit;
+}
+ .c-form__nextIcon::before {
+	 bottom: -1.5px;
+	 transform-origin: top right;
+	 transform: rotate(45deg);
+}
+ .c-form__nextIcon::after {
+	 top: -1.5px;
+	 transform-origin: bottom right;
+	 transform: rotate(-45deg);
+}
+ .c-form__progress {
+	 position: fixed;
+	 height: 100%;
+	 width: 0;
+	 background-image: linear-gradient(to top, #041122 0%, #345066 100%);
+	 transition: 0.3s;
+}
+  </style>
+  <body>
+	{% if message %}
+	<h6 style="color: #ffffff; margin-bottom: 38em; padding-top: 0; position: absolute;">{{message}}</h6>
+	{% endif %}
+    <input class="c-checkbox" type="checkbox" id="start">
+    <input class="c-checkbox" type="checkbox" id="progress2">
+    <input class="c-checkbox" type="checkbox" id="finish">
+    <div class="c-form__progress"></div>
+    <div class="c-formContainer">
+      <div class="c-welcome">Welcome aboard!</div>
+      <form class="c-form" action="{% url 'login' %}" method="POST">
+        <div class="c-form__group">
+          <label class="c-form__label" for="username">
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            class="c-form__input"
+                            placeholder=" "
+                            required>
+    
+                        <label class="c-form__next" for="progress2" role="button">
+                            <span class="c-form__nextIcon"></span>
+                        </label>
+    
+          <span class="c-form__groupLabel">Write your full name.</span>
+          <b class="c-form__border"></b>
+          </label>
+        </div>
+    
+        <div class="c-form__group">
+          <label class="c-form__label" for="fpass">
+                        <input
+                            type="password"
+                            id="fpass"
+                            name="password"
+                            class="c-form__input"
+                            placeholder=" "
+                            required>
+    
+                        
+                        <input class="btn" style="margin-left: 1em; color: white;" type="submit" value="login"/>
+                       
+                        
+          <span class="c-form__groupLabel">Write your password.</span>
+          <b class="c-form__border"></b>
+          </label>
+        </div>
+    
+        <label class="c-form__toggle" for="start">Login<span class="c-form__toggleIcon"></span></label>
+        {% csrf_token %} 
+      </form>
+    </div>
+    <a style="color: #ffffff; margin-top: 40em; padding-top: 0; position: absolute;" href="{% url 'signin' %}">Create an account</a>
+	<img style="opacity:0.55;position: absolute; margin-bottom: 0;" src="{% static 'logo.big.png' %}">   
+	
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.4.0/esm/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxchimp/1.3.0/jquery.ajaxchimp.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+	<script src="{% static 'main.js' %}"></script>
+  </body>
+</html>
+

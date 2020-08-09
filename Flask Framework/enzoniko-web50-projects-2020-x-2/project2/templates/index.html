@@ -1,0 +1,270 @@
+{% extends "layout.html" %}
+
+{% block title %}Flack{% endblock %}
+
+{% block main %}
+  <br>
+  <br>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6" id="form">
+      {% if not name %}
+        <form id="formDisplay">
+          <div class="form-group">
+            <lable style="color:#fd65fd" for="name">Please, Choose your Personal Name</label>
+            <input style="background-color: #fd65fd ; border-color: #8b00f0; color: #8b00f0;"id="name" type="text" class="form-control" placeholder="Enter Name">
+            <small style="color: #ff0909;" class="form-text">We'll save this name for the next time you visit Flack</small>
+          </div>
+          <button style="background-color: #fd65fd ; border-color: #8b00f0; color: #8b00f0;" class="btn btn-primary" type="submit">Enter</button>
+        </form>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+  <div class="container" id="DisplayName">
+    {% if name %}
+        <h2 style="color:#fd65fd">Hello <span style="color: #ff0909;">{{ name }}</span>, nice to see you again :)</h2>
+    {% endif %}
+    <div id="user-data" data-username="{{ name }}"></div>
+  </div>
+
+  <div id="channelContainer" class="container col-md-6" style="{% if name %}{% else %}display: none;{% endif %}" id="createChannel">
+    <form id="formChannel">
+      <div class="form-group">
+        <label style="color: #fd65fd" for="channel">Let's create a New Channel, Please Give it a Name</label>
+        <input style="background-color: #fd65fd ; border-color: #8b00f0; color: #8b00f0;"id="channel" type="text" autocomplete="off" class="form-control" placeholder="Enter Channel Name">
+        <small id="channelMessage" style="color: #ff0909"></small>
+      </div>
+      <button style="background-color: #fd65fd ; border-color: #8b00f0; color: #8b00f0;" class="btn btn-primary" type="submit">Create Channel</button>
+    </form>
+    <br>
+    <br>
+  </div>
+  <div class="container">
+    <ul class="list-unstyled">
+      <li style="color: #fd65fd; font-weight: bold; font-size: 1.3rem;">These are all the available Channels in this moment</li>
+      <small style="color: #ff0909">(Click on the name to Enter the Chatroom)</small>
+      <hr class="col-md-6">
+    </ul>
+    <ul style="color: #fd65fd;" class="list-unstyled" id="channelList">
+      {% if channels %}
+        {% for channel in channels %}
+        <li style="color: #fd65fd !important"class="channel-list-item">{{ channel.name }}</li>
+        {% endfor %}
+      {% else %}
+        <li style="color: #fd65fd !important">- No available Channels -</li>
+      {% endif %}
+    </ul>
+  </div>
+  
+  <div id="chatWindow" class="container chatWindow" style="visibility: hidden;">
+    <div style="color:#fd65fd" class="container" id="title"></div>
+    <div style="background-color: #fd65fd" class="container chatMessages">
+      <br>
+      <ul class="list-unstyled" id="chatMessages">
+
+      </ul>
+    </div>
+    <div class="container chatTyping">
+      <form id="formTyping">
+        <div class="form-row">
+          <div class="col-11">
+            <input style="background-color:#fd65fd !important; border-color:#fd65fd !important" id="message" type="text" autocomplete="off" name="messageTyping" placeholder="Type message" class="form-control">
+          </div>
+          <div class="col-1">
+            <button style="background-color:#fd65fd !important; border-color:#fd65fd !important; color: #8b00f0 !important" type="submit" class="btn btn-primary">Send</button>
+          </div>
+        </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+  <script src="/static/formName.js"></script>
+  <script>
+    // THIS IS FOR CREATING A NEW CHANNEL
+    document.addEventListener('DOMContentLoaded', () => {
+      // Once the Display Name has been provided
+      if (document.querySelector('#channelContainer')){
+        // When a new Channel is attempted to be created
+        document.querySelector('#formChannel').onsubmit = () => {
+          // New form request and formData
+          let request = new XMLHttpRequest;
+          let data = new FormData();
+          let channel = document.querySelector('#channel').value;
+
+          if (channel == '') {
+            document.querySelector('#channelMessage').innerHTML = "This field can`t be empty!";
+            return false;
+          } else {
+
+            data.append('channel', channel);
+            request.open('POST', '/channel');
+            request.send(data);
+            request.onload = () => {
+              let data = JSON.parse(request.responseText);
+
+              if (data.success){
+                let list = document.querySelector('#channelList');
+                // Remove all channels before insert all the new one. Just in case some would be removed
+                while (list.firstChild) {
+                  list.removeChild(list.firstChild);
+                }
+                // Now, for everyone create a new li tag
+                for (let i = 0; i < data.channels.length ; i++){
+                  let elem = document.createElement('li');
+                  elem.style.color = '#fd65fd'
+                  elem.className = 'channel-list-item';
+                  elem.innerHTML = data.channels[i]["name"];
+                  list.append(elem);
+                }
+
+                // Messages to show for the User
+                document.querySelector('#channelMessage').innerHTML = `Your channel ${channel} has been created`;
+
+              }else{
+                document.querySelector('#channelMessage').innerHTML = `There was an error. ${channel} already exist`;
+              }
+            }
+            // Stop the form submission
+            return false;
+          }
+        }
+      }
+    });
+  </script>
+  <script id="template" type="text/template">
+    {% raw %}<li data-sender="{{ sender }}" class="hiddingMessage message">{{time}} | {{sender}} says: <span id="justMessage">{{message}}</span> &nbsp &nbsp <span class="delete" style="visibility: hidden;"><img style="width: 15px; height: 15px;" src="static/x-icon.png" alt="delete message"></span></li>{% endraw %}
+  </script>
+  <script>
+    // THIS IS FOR START USING INSTANT CHAT MESSAGING WITH SOCKET
+    // Start Socket connection
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+    var template = Handlebars.compile(document.querySelector('#template').innerHTML);
+    // The channel list is now just that, a list.
+    var list = document.querySelector('#channelList');
+
+    // To avoid ask too many times to DOM
+    var chatWindow = document.querySelector('#chatWindow');
+    var chatMessages = document.querySelector('#chatMessages');
+    var formTyping = document.querySelector('#formTyping');
+    var message = document.querySelector('#message');
+    var allChannels = document.querySelector('#channelList').childNodes;
+
+    {% if lastChannel %}
+      for ( let j = 0; j < allChannels.length; j++){
+        if (allChannels[j].innerHTML == "{{ lastChannel }}"){
+          if (chatWindow.style.visibility === "hidden"){
+            chatWindow.style.visibility = 'visible';
+            chatWindow.style.backgroundColor = '#8b00f0';
+          }
+
+          var title = document.querySelector('#title');
+          title.innerHTML = "{{ lastChannel }}";
+          title.style.color = '#fd65fd';
+          socket.emit('update', {"channel": title.innerHTML});
+        }
+      }
+    {% endif %}
+    // And here I select now all the children
+    list.addEventListener('mouseenter', () => {
+      allChannels = document.querySelector('#channelList').childNodes;
+
+
+      if (allChannels != null){
+
+        // For every child when clicked open the window, change window's title and emit for update messages
+        for (let i = 0; i < allChannels.length; i++){
+          allChannels[i].onclick = () => {
+
+            if (chatWindow.style.visibility === "hidden"){
+              chatWindow.style.visibility = 'visible';
+              chatWindow.style.backgroundColor = '#8b00f0';
+            }
+
+            var title = document.querySelector('#title');
+            title.style.color = '#fd65fd';
+            title.innerHTML = allChannels[i].innerHTML;
+
+            // Trying to send the Channel name to the server for store in session
+            let request = new XMLHttpRequest;
+            request.open('POST', '/lastChannel');
+            request.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+            request.send("lastChannel=" + title.innerHTML);
+
+            chatMessages.innerHTML = '';
+            socket.emit('update', {"channel": title.innerHTML});
+            location.reload()
+          }
+        }
+      }
+    });
+    // On conect get ready to send messages when chatForm is submit
+    socket.on('connect', () => {
+
+      formTyping.onsubmit = () => {
+        socket.emit('sendMessage', {"channel": title.innerHTML, "message": message.value});
+        message.value = '';
+        return false;
+      }
+    });
+    // Update all olds messages. This is a response from the emit('update') above
+    socket.on('updateChat', function(data, name) {
+      if (data != 'notFound'){
+        let username = document.querySelector('#user-data').dataset.username;
+
+        if (name == username) {
+          for (var i = 0; i < data.length; i++){
+
+            if (data[i].message != null){
+              oldLi = template({"time": data[i].time, "sender": data[i].sender, "message": data[i].message});
+              chatMessages.innerHTML += oldLi;
+            }
+          }
+        }
+      }else{
+        chatMessages.innerHTML = '';
+      }
+    });
+    // Update last new message. This is a response from emit('sendMessage') above
+    socket.on('update', data => {
+      newLi = template({"time": data.time, "sender": data.sender, "message": data.message});
+      chatMessages.innerHTML += (newLi);
+    });
+
+    // Make visible or not visible the delete option for messages
+    document.getElementsByClassName('chatMessages')[0].onmouseover = () => {
+
+        var cancel = Array.from(document.getElementsByClassName("delete"));
+
+        cancel.forEach(elem => {
+          elem.parentElement.onmouseover = () => {
+            if (elem.parentElement.dataset.sender == document.querySelector('#user-data').dataset.username) {
+              elem.style.visibility = "visible";
+            }
+          }
+          elem.parentElement.onmouseout = () => {
+          elem.style.visibility = "hidden";
+          }
+        });
+
+        cancel.forEach(elem => {
+          elem.onclick = () => {
+            delMessage = elem.parentElement.children[0].innerHTML;
+            elem.parentElement.style.animationPlayState = 'running';
+            elem.parentElement.addEventListener('animationend', () => {
+              elem.parentElement.remove();
+            });
+
+            let request = new XMLHttpRequest;
+            let data = new FormData;
+            channel = document.getElementById('title').innerHTML;
+            data.append("channel", channel);
+            data.append("message", delMessage);
+            request.open("POST", "/delete");
+            request.send(data);
+          }
+        });
+    }
+  </script>
+{% endblock %}

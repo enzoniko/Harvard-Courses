@@ -1,0 +1,222 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{bookInfo[0]['title']}}
+{% endblock %}
+
+
+{% block style %}
+    <style>
+        @media only screen and (max-width: 799px) {
+            .last_image {
+                display: none !important;
+                opacity: 0%; } }
+        .opacity-75 {
+        opacity: 75%; }
+
+        .opacity-60 {
+        opacity: 60%; }
+
+        .opacity-35 {
+        opacity: 35%; }
+
+        ul li {
+        border-color: #454d55; }
+
+        #yellow {
+        opacity: 60%; }
+        body, p, input, select, textarea, button {
+        letter-spacing: -0.2px;
+        font-size: 16px;
+        }
+        div, p {
+        color: #BABECC;
+        text-shadow: 1px 1px 1px #FFF;
+        }
+        form {
+        padding: 16px;
+        width: 320px;
+        margin: 0 auto;
+        }
+        .segment {
+        padding: 32px 0;
+        text-align: center;
+        }
+        button, input {
+        border: 0;
+        outline: 0;
+        font-size: 16px;
+        border-radius: 320px;
+        padding: 16px;
+        background-color: #EBECF0;
+        text-shadow: 1px 1px 0 #FFF;
+        }
+        label {
+        display: block;
+        margin-bottom: 24px;
+        width: 100%;
+        }
+        input {
+        margin-right: 8px;
+        box-shadow: inset 2px 2px 5px #BABECC, inset -5px -5px 10px #FFF;
+        width: 100%;
+        box-sizing: border-box;
+        transition: all 0.2s ease-in-out;
+        appearance: none;
+        -webkit-appearance: none;
+        }
+        input:focus {
+        box-shadow: inset 1px 1px 2px #BABECC, inset -1px -1px 2px #FFF;
+        }
+        button {
+        color: #61677C;
+        font-weight: bold;
+        box-shadow: -5px -5px 20px #fff0, 5px 5px 20px #fff0;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        font-weight: 600;
+        }
+        button:hover {
+        box-shadow: -2px -2px 5px #FFF, 2px 2px 5px #BABECC;
+        }
+        button:active {
+        box-shadow: inset 1px 1px 2px #BABECC, inset -1px -1px 2px #FFF;
+        }
+        button .icon {
+        margin-right: 8px;
+        }
+        button.unit {
+        border-radius: 8px;
+        line-height: 0;
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 8px;
+        font-size: 19.2px;
+        }
+        button.unit .icon {
+        margin-right: 0;
+        }
+        button.red {
+        display: block;
+        width: 100%;
+        }
+        .input-group {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        }
+        .input-group label {
+        margin: 0;
+        flex: 1;
+        }
+
+    </style>
+{% endblock %}
+
+
+{% block header%}
+    <nav class="navbar navbar-expand-lg navbar-dark opacity-75">
+        <a class="navbar-brand" href="#">BookKing</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            {% if session.user_id %}
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link active" href="/">Home<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/searching">Search</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Log Out</a>
+                    </li>
+                </ul>
+            {% else %}
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link active" href="/register">Register<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Log in</a>
+                    </li>
+                </ul>
+            {% endif %}
+        </div>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <body style="background-image: url(https://images8.alphacoders.com/617/thumb-1920-617304.jpg);">
+        <div class="dropdown-divider opacity-35" style="border-top-color:black"></div>
+            <div class = "container opacity-60">
+                <div class="row text-center">
+                    <div class="col-sm" style="margin-left: auto; margin-right: auto;">
+                        <ul class="list-group">
+                            <li class="list-group-item bg-dark text-light">Title: {{bookInfo[0]['title']}}</li>
+                            <li class="list-group-item bg-dark text-light">Author: {{bookInfo[0]['author']}}</li>
+                            <li class="list-group-item bg-dark text-light">Published: {{bookInfo[0]['year']}}</li>
+                            <li class="list-group-item bg-dark text-light">ISBN-10: {{bookInfo[0]['isbn']}}</li>
+                            <li class="list-group-item bg-dark text-light">Nº of Ratings: {{bookInfo[1]['work_ratings_count']}}</li>
+                            <li class="list-group-item bg-dark text-light">Average Rating: {{bookInfo[1]['average_rating']}}</li>
+                            <li class="list-group-item bg-dark text-light"><a href="https://www.goodreads.com/search?q={{bookInfo[0]['title']}}">Goodreads page</a></li>
+                        </ul> 
+                    </div>
+                    <div class="col-sm" style="margin-left: auto; margin-right: auto;">
+                        <img src="http://covers.openlibrary.org/b/isbn/{{bookInfo[0]['isbn']}}-M.jpg" height="346">
+                    </div>
+                </div>        
+            </div>
+        <div class="dropdown-divider opacity-35" style="border-top-color:black"></div>
+
+        <h1 class="alert alert-warning opacity-60" style="text-align: center; color: #ffffff; background-color: transparent; border-color: transparent;">User Reviews</h1>
+        <h4 class="opacity-60" style="text-align: center; color: rgb(255, 255, 255); margin-bottom: 2em">Make your own review</h4>
+   
+        <div>
+            <!-- REVIEW FORM -->
+            <form method="POST" class="form-border">
+                <div class="form-row">
+                    <div class="form-group col-sm" style="margin-left: auto; margin-right: auto;">
+                        <select id="rating" name="rating" class="form-control" required style="font-size:12px;  width: 100%; height: 38px;color: rgb(255, 255, 255); background-color: #343a40!important;">
+                            <option value="1">★</option>
+                            <option value="2">★★</option>
+                            <option value="3">★★★</option>
+                            <option value="4">★★★★</option>
+                            <option value="5">★★★★★</option>
+                        </select>
+                    </div>
+                    <div class="col-sm text-center" style="margin-left: auto; margin-right: auto;">
+                        <div class="input-group">
+                            <textarea name="comment" id="comment" class="form-control" rows="1" required style="display: block; width: auto; padding: .375rem .75rem; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #ffffff; background-color: #343a40!important; background-clip: padding-box; border: 1px solid #ced4da; border-radius: .25rem; transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm text-center" style="margin-left: auto; margin-right: auto;">
+                        <p></p>
+                        <button class="btn btn-dark" style="background-color: #343a40!important; border: 1px solid #ced4da;" type="submit">Submit</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- REVIEW LIST -->
+            <div id="userReviews">
+                <h2></h2>
+                {% for review in reviews %}
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start"  style="background-color: transparent!important;"> 
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1" style="color:rgb(255, 255, 255)">{{review['username']}} said...</h6>
+                            <small>{{review['time']}}</small>
+                        </div>
+                        <p class="mb-1">{{review['comment']}}</p>
+                        <small>Rated: {{review['rating']}}</small>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </body>
+{% endblock %}

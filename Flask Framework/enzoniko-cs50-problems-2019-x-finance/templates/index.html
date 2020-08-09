@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+My page
+{% endblock %}
+
+{% block main %}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Symbol</th>
+            <th scope="col">Name</th>
+            <th scope="col">Shares</th>
+            <th scope="col">Price</th>
+            <th scope="col">TOTAL</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for stock in stocks %}
+        <tr>
+            <td>{{ stock.symbol }}</td>
+            <td>{{ stock.name }}</td>
+            <td>{{ stock.shares }}</td>
+            <td>{{ stock.price | usd  }}</td>
+            <td>{{ stock.total | usd  }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td scope="col">CASH</td>
+            <td scope="col"></td>
+            <td scope="col"></td>
+            <td scope="col"></td>
+            <td scope="col">{{ user | usd  }}</td>
+        </tr>
+        <tr>
+            <th scope="col">TOTAL MONEY</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col">{{ money | usd  }}</th>
+        </tr>
+
+    </tbody>
+</table>
+{% endblock %}

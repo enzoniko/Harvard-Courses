@@ -1,0 +1,4 @@
+My project is a website containing 6 HTML files and 2 SCSS files converted to CSS.
+All HTML files contain a NAV-BAR, a cool background image, and some components, the "index" file have a Table and a List besides a h1 tag; "Pictures", "Red" and "Yellow", have images inside, "About" have some cards with text besides a h1 tag, and "Contacts" have interactive icons for my social medias and also the h1 tag;
+I use bootstrap and Awesome CSS libraries and my SCSS files contain examples of variables, inheritance and nesting, besides mobile responsive medias queries and selectors for ID and CLASS;
+I hope you like it.
