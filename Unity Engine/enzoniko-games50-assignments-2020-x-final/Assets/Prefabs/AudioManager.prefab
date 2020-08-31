@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7216417090916394475
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7216417090916394477}
+  - component: {fileID: 7216417090916394476}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7216417090916394477
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7216417090916394475}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 505.22525, y: 159.03474, z: -2154.2456}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7216417090916394476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7216417090916394475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d84364cec8851f243abe915ead230efe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: ThemeSong
+    clip: {fileID: 8300000, guid: 519c35d8076031c40908222a65786a9d, type: 3}
+    volume: 0.15
+    pitch: 0
+    loop: 1
+    source: {fileID: 0}
+  - name: JumpSound
+    clip: {fileID: 8300000, guid: a685b372b2d758842893fdfb88a63237, type: 3}
+    volume: 0.25
+    pitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: GameOver
+    clip: {fileID: 8300000, guid: 73ea539a79b1da64988e5639f15a1634, type: 3}
+    volume: 0.25
+    pitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: EatSound
+    clip: {fileID: 8300000, guid: 355b9b9c2aba0284284854fb60bea799, type: 3}
+    volume: 0.25
+    pitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: VomitSound
+    clip: {fileID: 8300000, guid: 18cc825cdb06da642b2f8a820ab06688, type: 3}
+    volume: 0
+    pitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: NextRound
+    clip: {fileID: 8300000, guid: 8a198272ec2a9824ea1a1fde6e2293b0, type: 3}
+    volume: 0
+    pitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: 
+    clip: {fileID: 0}
+    volume: 0
+    pitch: 0
+    loop: 0
+    source: {fileID: 0}
