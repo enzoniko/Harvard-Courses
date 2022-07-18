@@ -39,11 +39,10 @@ def name():
     name = request.form.get("name")
 
     """If Display Name fields not empty, create and remember it in the session"""
-    if name is not '':
-        session["name"] = name
-        return jsonify({"success": True, "name": name})
-    else:
+    if name is '':
         return jsonify({"success": False})
+    session["name"] = name
+    return jsonify({"success": True, "name": name})
 
 @app.route("/lastChannel", methods=["POST"])
 def lastChannel():
@@ -68,10 +67,8 @@ def channel():
     newChannel = Channel(channel)
     channels.append(newChannel)
 
-    """Create a dictionary for every object so they can be transformed easily into JSON objects"""  
-    channelsFeed = []
-    for object in channels:
-        channelsFeed.append(object.__dict__)
+    """Create a dictionary for every object so they can be transformed easily into JSON objects"""
+    channelsFeed = [object.__dict__ for object in channels]
     return jsonify({"success": True, "channel": channel, "channels": channelsFeed})
 
 @app.route("/delete", methods = ["POST"])

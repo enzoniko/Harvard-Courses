@@ -23,10 +23,9 @@ class StackFrontier():
     def remove(self):
         if self.empty():
             raise Exception("empty frontier")
-        else:
-            node = self.frontier[-1]
-            self.frontier = self.frontier[:-1]
-            return node
+        node = self.frontier[-1]
+        self.frontier = self.frontier[:-1]
+        return node
 
 
 class QueueFrontier(StackFrontier):
@@ -34,10 +33,9 @@ class QueueFrontier(StackFrontier):
     def remove(self):
         if self.empty():
             raise Exception("empty frontier")
-        else:
-            node = self.frontier[0]
-            self.frontier = self.frontier[1:]
-            return node
+        node = self.frontier[0]
+        self.frontier = self.frontier[1:]
+        return node
 
 class Maze():
 
@@ -109,11 +107,13 @@ class Maze():
             ("right", (row, col + 1))
         ]
 
-        result = []
-        for action, (r, c) in candidates:
-            if 0 <= r < self.height and 0 <= c < self.width and not self.walls[r][c]:
-                result.append((action, (r, c)))
-        return result
+        return [
+            (action, (r, c))
+            for action, (r, c) in candidates
+            if 0 <= r < self.height
+            and 0 <= c < self.width
+            and not self.walls[r][c]
+        ]
 
 
     def solve(self):

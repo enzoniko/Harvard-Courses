@@ -15,10 +15,7 @@ def sentences(a, b):
     return a_sentences & b_sentences
 
 def substring_tokenize(str, n):
-    substrings = []
-    for i in range(len(str)- n + 1):
-        substrings.append(str[i:i + n])
-    return substrings
+    return [str[i:i + n] for i in range(len(str)- n + 1)]
 
 def substrings(a, b, n):
     """Return substrings of length n in both a and b"""

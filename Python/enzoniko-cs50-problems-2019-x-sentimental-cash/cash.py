@@ -14,14 +14,13 @@ while (valor > 0):
     if (atual <= apagar):
         apagar -= atual
         m += 1
-    else:
-        if (apagar == 0):
-            break
-        elif (atual == 25):
-            atual = 10
-        elif (atual == 10):
-            atual = 5
-        elif (atual == 5):
-            atual = 1
+    elif (apagar == 0):
+        break
+    elif (atual == 25):
+        atual = 10
+    elif (atual == 10):
+        atual = 5
+    elif (atual == 5):
+        atual = 1
 # Printa a quantidade mínima de moedas
 print(m)

@@ -10,7 +10,7 @@ for i in range(len(text)):
         letterscount += 1
     elif (text[i] == " "):
         wordcount += 1
-    elif (text[i] == "." or text[i] == "!" or text[i] == "?"):
+    elif text[i] in [".", "!", "?"]:
         sentencecount += 1
 letterscount = 1.0 * letterscount
 wordcount = 1.0 * wordcount

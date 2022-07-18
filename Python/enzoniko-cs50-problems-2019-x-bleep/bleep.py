@@ -34,11 +34,9 @@ def main():
 
 
 def load(banned):
-    # BAIXA AS PALAVRAS NO ARQUIVO DE TEXTO
-    file = open(banned, "r")
-    for line in file:
-        words.add(line.rstrip("\n"))
-    file.close()
+    with open(banned, "r") as file:
+        for line in file:
+            words.add(line.rstrip("\n"))
     return True
 
 

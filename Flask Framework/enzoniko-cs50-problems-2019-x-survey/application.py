@@ -49,8 +49,7 @@ def get_sheet():
     submits = []
     with open("./survey.csv", "r") as f:
         csv_f = csv.reader(f)
-        for row in csv_f:
-            submits.append(row)
+        submits.extend(iter(csv_f))
     return render_template("sheet.html", submits=submits)
     # return render_template("error.html", message="TODO")
 

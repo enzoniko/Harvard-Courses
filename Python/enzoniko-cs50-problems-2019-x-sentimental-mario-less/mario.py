@@ -8,10 +8,10 @@ while height < 1 or height > 8:
 # Pega o valor da altura e divide em andares
 for i in range(height):
     # Escreve os espaços necessários
-    for j in range(height - i - 1):
+    for _ in range(height - i - 1):
         print(" ", end="")
     # Escreve os blocos necessários
-    for j in range(i + 1):
+    for _ in range(i + 1):
         print("#", end="")
     # Divide os andares
     print()

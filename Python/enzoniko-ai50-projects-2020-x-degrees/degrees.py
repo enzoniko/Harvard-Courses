@@ -164,7 +164,7 @@ def person_id_for_name(name):
     resolving ambiguities as needed.
     """
     person_ids = list(names.get(name.lower(), set()))
-    if len(person_ids) == 0:
+    if not person_ids:
         return None
     elif len(person_ids) > 1:
         print(f"Which '{name}'?")

@@ -27,14 +27,9 @@ def main():
         reader = csv.DictReader(characters)
 
         for row in reader:
-            names = []
+            names = list(row["name"].split(" "))
 
-            for part in row["name"].split(" "):
-                names.append(part)
-
-            names.append(row["house"])
-            names.append(row["birth"])
-
+            names.extend((row["house"], row["birth"]))
             if (len(names) == 5):
                 cur.execute("INSERT INTO students (first, middle, last, house, birth) VALUES(?, ?, ?, ?, ?)", names[:5])
 

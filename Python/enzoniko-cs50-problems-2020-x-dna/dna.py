@@ -7,10 +7,8 @@ if len(argv) != 3:
     print("Usage: python dna.py data.csv sequence.txt")
     exit(1)
 
-# Reads the text file
-f = open(argv[2], "r")
-sequences = f.readline()
-f.close()
+with open(argv[2], "r") as f:
+    sequences = f.readline()
 
 # Returns the longest sequences in a dictionary
 
@@ -25,19 +23,18 @@ def patterns(a, b, c): #, e, f, g, h):
 
         text_accumulator += char
 
-        for key in STRs.keys():
+        for key in STRs:
 
-            if idx + 1 + len(key) <= len(sequences) - 1:
-                if key in text_accumulator:
-                    counter += 1
-                    text_accumulator = ""
+            if (
+                idx + 1 + len(key) <= len(sequences) - 1
+                and key in text_accumulator
+            ):
+                counter += 1
+                text_accumulator = ""
 
-                    if sequences[idx + 1: idx + 1 + len(key)] == key:
-                        continue
-                    else:
-                        if STRs[key] < counter:
-                            STRs[key] = counter
-                        counter = 0
+                if sequences[idx + 1 : idx + 1 + len(key)] != key:
+                    STRs[key] = max(STRs[key], counter)
+                    counter = 0
 
     return STRs
 

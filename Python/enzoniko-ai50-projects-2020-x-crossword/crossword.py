@@ -9,12 +9,13 @@ class Variable():
         self.j = j
         self.direction = direction
         self.length = length
-        self.cells = []
-        for k in range(self.length):
-            self.cells.append(
-                (self.i + (k if self.direction == Variable.DOWN else 0),
-                 self.j + (k if self.direction == Variable.ACROSS else 0))
+        self.cells = [
+            (
+                self.i + (k if self.direction == Variable.DOWN else 0),
+                self.j + (k if self.direction == Variable.ACROSS else 0),
             )
+            for k in range(self.length)
+        ]
 
     def __hash__(self):
         return hash((self.i, self.j, self.direction, self.length))
@@ -49,12 +50,10 @@ class Crossword():
             for i in range(self.height):
                 row = []
                 for j in range(self.width):
-                    if j >= len(contents[i]):
+                    if j >= len(contents[i]) or contents[i][j] != "_":
                         row.append(False)
-                    elif contents[i][j] == "_":
-                        row.append(True)
                     else:
-                        row.append(False)
+                        row.append(True)
                 self.structure.append(row)
 
         # Save vocabulary list
@@ -66,12 +65,10 @@ class Crossword():
         for i in range(self.height):
             for j in range(self.width):
 
-                # Vertical words
-                starts_word = (
+                if starts_word := (
                     self.structure[i][j]
                     and (i == 0 or not self.structure[i - 1][j])
-                )
-                if starts_word:
+                ):
                     length = 1
                     for k in range(i + 1, self.height):
                         if self.structure[k][j]:
@@ -85,12 +82,10 @@ class Crossword():
                             length=length
                         ))
 
-                # Horizontal words
-                starts_word = (
+                if starts_word := (
                     self.structure[i][j]
                     and (j == 0 or not self.structure[i][j - 1])
-                )
-                if starts_word:
+                ):
                     length = 1
                     for k in range(j + 1, self.width):
                         if self.structure[i][k]:
@@ -108,26 +103,22 @@ class Crossword():
         # For any pair of variables v1, v2, their overlap is either:
         #    None, if the two variables do not overlap; or
         #    (i, j), where v1's ith character overlaps v2's jth character
-        self.overlaps = dict()
+        self.overlaps = {}
         for v1 in self.variables:
             for v2 in self.variables:
                 if v1 == v2:
                     continue
                 cells1 = v1.cells
                 cells2 = v2.cells
-                intersection = set(cells1).intersection(cells2)
-                if not intersection:
-                    self.overlaps[v1, v2] = None
-                else:
+                if intersection := set(cells1).intersection(cells2):
                     intersection = intersection.pop()
                     self.overlaps[v1, v2] = (
                         cells1.index(intersection),
                         cells2.index(intersection)
                     )
+                else:
+                    self.overlaps[v1, v2] = None
 
     def neighbors(self, var):
         """Given a variable, return set of overlapping variables."""
-        return set(
-            v for v in self.variables
-            if v != var and self.overlaps[v, var]
-        )
+        return {v for v in self.variables if v != var and self.overlaps[v, var]}

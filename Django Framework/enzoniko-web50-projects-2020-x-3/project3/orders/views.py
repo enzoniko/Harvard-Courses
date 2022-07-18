@@ -8,7 +8,7 @@ from .models import Category,Regular_pizza,Sicilian_pizza,Topping,Sub,Pasta,Sala
 
 # Create your views here.
 counter = Order_counter.objects.first()
-if counter==None:
+if counter is None:
     set_counter=Order_counter(counter=1)
     set_counter.save()
 superuser = User.objects.filter(is_superuser=True)
@@ -39,39 +39,38 @@ def login_view(request):
     username=request.POST["username"]
     password=request.POST["password"]
     user=authenticate(request,username=username,password=password)
-    if user is not None:
-        login(request,user)
-        return HttpResponseRedirect(reverse("index"))
-    else:
-        return render(request,"login.html",{"message":"Invalid credentials"}) 
+    if user is None:
+        return render(request,"login.html",{"message":"Invalid credentials"})
+    login(request,user)
+    return HttpResponseRedirect(reverse("index")) 
 
 def logout_view(request):
     logout(request)
     return render(request,"login.html",{"message":"Logged out."})
 
 def signin_view(request):
-    if request.method == "POST":
-        first_name=request.POST["first_name"]
-        last_name=request.POST["last_name"]
-        username=request.POST["username"]
-        email=request.POST["email"]
-        password=request.POST["password"]
-        password2=request.POST["password2"]
-        if not password==password2:
-            return render(request,"signin.html",{"message":"Passwords don't match."})
-        user=User.objects.create_user(username,email,password)
-        user.first_name=first_name
-        user.last_name=last_name
-        user.save()
-        counter=Order_counter.objects.first()
-        order_number=User_order(user=user,order_number=counter.counter)
-        order_number.save()
-        counter.counter=counter.counter+1
-        counter.save()
-        
-        
-        return render(request,"login.html",{"message":"Registered. You can log in now."}) 
-    return render(request,"signin.html") 
+    if request.method != "POST":
+        return render(request,"signin.html")
+    first_name=request.POST["first_name"]
+    last_name=request.POST["last_name"]
+    username=request.POST["username"]
+    email=request.POST["email"]
+    password=request.POST["password"]
+    password2=request.POST["password2"]
+    if password != password2:
+        return render(request,"signin.html",{"message":"Passwords don't match."})
+    user=User.objects.create_user(username,email,password)
+    user.first_name=first_name
+    user.last_name=last_name
+    user.save()
+    counter=Order_counter.objects.first()
+    order_number=User_order(user=user,order_number=counter.counter)
+    order_number.save()
+    counter.counter=counter.counter+1
+    counter.save()
+
+
+    return render(request,"login.html",{"message":"Registered. You can log in now."}) 
 
 def menu(request,category):
     menu,columns=findTable(category)
@@ -106,7 +105,7 @@ def add(request,category,name,price):
         "Topping_price": 0.00,
         "Order_number":order_number
     }
-    if (category == 'Regular Pizza' or category == 'Sicilian Pizza'):
+    if category in ['Regular Pizza', 'Sicilian Pizza']:
         if name =="1 topping":
             topping_allowance.topping_allowance+=1
             topping_allowance.save()
@@ -117,13 +116,13 @@ def add(request,category,name,price):
             topping_allowance.topping_allowance+=3    
             topping_allowance.save()
     if category == "Toppings" and topping_allowance.topping_allowance == 0:
-        return render(request,"menu.html",context) 
+        return render(request,"menu.html",context)
     if category == "Toppings" and topping_allowance.topping_allowance > 0:
         topping_allowance.topping_allowance-=1
         topping_allowance.save()
 
-    add=Order2(user=request.user,number=order_number,category=category,name=name,price=price) 
-    add.save()      
+    add=Order2(user=request.user,number=order_number,category=category,name=name,price=price)
+    add.save()
     context2 = {
         "Checkout":Order2.objects.filter(user=request.user,number=order_number),
         "Checkout_category":Order2.objects.filter(user=request.user,number=order_number).values_list('category').distinct(),
@@ -135,14 +134,14 @@ def add(request,category,name,price):
         "Columns":columns,
         "Topping_price": 0.00,
         "Order_number":order_number
-    }       
+    }
     return render(request,"menu.html",context2) 
 
 def delete(request,category,name,price):
     menu,columns=findTable(category)
     order_number=User_order.objects.get(user=request.user,status='initiated').order_number
     topping_allowance=User_order.objects.get(user=request.user,status='initiated')
-    if (category == 'Regular Pizza' or category == 'Sicilian Pizza'):
+    if category in ['Regular Pizza', 'Sicilian Pizza']:
         if name =="1 topping":
             topping_allowance.topping_allowance-=1
             topping_allowance.save()
@@ -160,9 +159,9 @@ def delete(request,category,name,price):
         topping_allowance.topping_allowance+=1
         topping_allowance.save()
 
-    
+
     find_order=Order2.objects.filter(user=request.user,category=category,name=name,price=price)[0]
-    find_order.delete()                
+    find_order.delete()
     context = {
         "Checkout":Order2.objects.filter(user=request.user,number=order_number),
         "Checkout_category":Order2.objects.filter(user=request.user,number=order_number).values_list('category').distinct(),

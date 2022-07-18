@@ -106,16 +106,12 @@ class CrosswordCreator():
         for variable in self.crossword.variables:
 
             # Create a list of words that should be removed from the variable's domain later
-            node_inconsistent_words = []
+            node_inconsistent_words = [
+                word
+                for word in self.domains[variable]
+                if len(word) != variable.length
+            ]
 
-            # For each word in the domain of a variable
-            for word in self.domains[variable]:
-
-                # If the length of the word is not equal to the length of the variable 
-                if len(word) != variable.length:
-
-                    # Append the word to the node_inconsistent_words list
-                    node_inconsistent_words.append(word)
 
             # For each word in the node_inconsistent_words list     
             for word in node_inconsistent_words:
@@ -132,7 +128,7 @@ class CrosswordCreator():
         Return True if a revision was made to the domain of `x`; return
         False if no revision was made.
         """
-    
+
         # Get the overlap, if any, between x and y variables.
         overlap = self.crossword.overlaps[x, y]
 
@@ -141,42 +137,28 @@ class CrosswordCreator():
 
         if overlap is None:
             return False
-            
+
         # For every value in x’s domain
         for x_value in self.domains[x]:
 
-            # keep track if any two values are possible to overlap
-            overlap_possible = False
-
-            # For every value in y's domain
-            for y_value in self.domains[y]:
-
-                # If they are distinct values
-                if x_value != y_value:
-
-                    # Make sure that they actually overlap at the characters provided
-                    # If the characters provided of each variables value is equal that means there are no conflicts
-                    if x_value[overlap[0]] == y_value[overlap[1]]:
-
-                        # Flag overlap possible as True
-                        overlap_possible = True
-
-                        # Break the loop since overlap is possible already
-                        break
+            overlap_possible = any(
+                x_value != y_value and x_value[overlap[0]] == y_value[overlap[1]]
+                for y_value in self.domains[y]
+            )
 
             # If no overlap is possible
             if not overlap_possible:
 
                 # Append the x value to the arc_inconsistent_values to be removed later
                 arc_inconsistent_values.append(x_value)
-    
+
         # For every arc inconsistent x value 
         for x_value in arc_inconsistent_values:
-            
+
             # Remove the x value from the x's domain
             self.domains[x].remove(x_value)
             # print("removed: ", x_value, "from :", x)
-    
+
         # Returns if we made changes or not
         return len(arc_inconsistent_values) > 0
 
@@ -200,24 +182,19 @@ class CrosswordCreator():
             for X in self.crossword.variables:
 
                 # Loop through all neighbor variables of X
-                for Y in self.crossword.neighbors(X):
-
-                    # Append those variables to the queue as a tuple
-                    queue.append((X, Y))
-                
-        # If arcs are specified
+                queue.extend((X, Y) for Y in self.crossword.neighbors(X))
         else:
 
             # While arcs is not empty
             while len(arcs) > 0:
-        
+
                 # Pop an arc from the queue
                 (X, Y) = arcs.pop(0)
-                
+
                 # Run the revise algorithm in this arc
                 # If the arc was revised
                 if self.revise(X, Y):
-                    
+
                     # If there is nothing in X's domain
                     if len(self.domains[X]) == 0:
 
@@ -242,13 +219,7 @@ class CrosswordCreator():
         """
 
         # If the assignment has the same number o variables as the total number of variables in the crossword
-        if len(assignment) == len(self.crossword.variables):
-
-            # Returns True
-            return True
-        
-        # Otherwise returns False
-        return False
+        return len(assignment) == len(self.crossword.variables)
  
     def consistent(self, assignment):
         """
@@ -300,7 +271,7 @@ class CrosswordCreator():
         """
 
         # Dictionary where the keys are words and the values are the number of values they rule out of neighboring variables
-        n = dict()
+        n = {}
 
         # For each value in the var's domain
         for value in self.domains[var]:
@@ -310,7 +281,7 @@ class CrosswordCreator():
 
             # For each neighbor of the var except those in the assignment
             for neighbor in self.crossword.neighbors(var) - set(assignment.keys()):
-                
+
                 # For each value in the domain of the neighbor we are checking
                 for neighbor_value in self.domains[neighbor]:
 
@@ -332,16 +303,12 @@ class CrosswordCreator():
         return values.
         """
         # Unassigned variables list
-        unassigned_variables = []
+        unassigned_variables = [
+            variable
+            for variable in self.crossword.variables
+            if variable not in list(assignment.keys())
+        ]
 
-        # For each variable in the crossword
-        for variable in self.crossword.variables:
-
-            # If the variable is not in the assignment
-            if variable not in list(assignment.keys()):
-
-                # Append it to the unassigned variables list
-                unassigned_variables.append(variable)
 
         # Sort the unassigned variables list by the fewest number of remaining values in each variable's domain in ascending order
         unassigned_variables.sort(key = lambda remaining_values: len(self.domains[remaining_values]))
@@ -355,50 +322,23 @@ class CrosswordCreator():
 
     def inferences(self, variable, assignment):
 
-        # Create an arcs list
-        arcs = []
-
         # Get a copy of the domains
         old_domains = copy.deepcopy(self.domains)
 
-        # For each neighbor of the variable
-        for Y in self.crossword.neighbors(variable):
-
-            # Append to the arcs list a tuple with neighbor and variable
-            arcs.append((Y, variable))
-
+        arcs = [(Y, variable) for Y in self.crossword.neighbors(variable)]
         # Enforce arc-consistency in this arcs
         # If everything is arc consistent
-        if self.ac3(arcs = arcs):
-            
-            # If changes were made
-            if self.domains != old_domains:
-                
+        if self.ac3(arcs=arcs) and self.domains != old_domains:
                 # Create an empty inferences dict
-                inferences = dict()
+            inferences = {
+                variable: next(iter(self.domains[variable]))
+                for variable in self.domains
+                if len(self.domains[variable]) == 1 and variable not in assignment
+            }
 
-                # For each variable in domains
-                for variable in self.domains:
-
-                    # If there is only one value possible for this variable
-                    if len(self.domains[variable]) == 1:
-                        
-                        # If the variable is not already in the assignment
-                        if variable not in assignment:
-
-                            # print("possible assignment for: ", variable, "is: ", self.domains[variable])
-                            # Add the variable / value pair in the inferences dict
-                            inferences[variable] = next(iter(self.domains[variable]))
 
                 # If the inferences dict is empty
-                if len(inferences) == 0:
-
-                    # Return None (failure)
-                    return None
-
-                # Otherwise return the inferences
-                return inferences
-
+            return inferences or None
         # If the ac3 function is False, return None (failure)
         return None
         

@@ -162,24 +162,22 @@ class ValidaCpfCnpj:
         :return: o cpf ou cnpj formatado
         :rtype: str
         """
-        if not self._validado:
-            if not self.cpf_cnpj or not self.valida():
-                raise ValueError("Enviar o CPF e validar para "
-                                 "obter CPF formatado.")
+        if not self._validado and (not self.cpf_cnpj or not self.valida()):
+            raise ValueError("Enviar o CPF e validar para "
+                             "obter CPF formatado.")
 
         qtd_caracteres = len(self.cpf_cnpj)
 
         if qtd_caracteres == 11:
             cpf = self.cpf_cnpj
 
-            return '%s.%s.%s-%s' % (cpf[0:3], cpf[3:6], cpf[6:9], cpf[9:],)
+            return f'{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}'
 
         elif qtd_caracteres == 14:
             cnpj = self.cpf_cnpj
             # 63.080.648/0001-35
 
-            return '%s.%s.%s/%s-%s' % \
-                   (cnpj[0:2], cnpj[2:5], cnpj[5:8], cnpj[8:12], cnpj[12:])
+            return f'{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:]}'
 
     @staticmethod
     def _calcula_digitos(

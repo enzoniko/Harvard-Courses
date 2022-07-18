@@ -82,7 +82,7 @@ class NimAI():
          - `state` is a tuple of remaining piles, e.g. (1, 1, 4, 4)
          - `action` is a tuple `(i, j)` for an action
         """
-        self.q = dict()
+        self.q = {}
         self.alpha = alpha
         self.epsilon = epsilon
 
@@ -136,16 +136,14 @@ class NimAI():
         """
 
         # Create an empty Q_values list
-        Q_values = []
+        Q_values = [
+            self.get_q_value(state, action)
+            for action in Nim.available_actions(state)
+        ]
 
-        # For each available action in the state
-        for action in Nim.available_actions(state):
 
-            # Append to the Q_values list the Q_value of the state/action pair
-            Q_values.append(self.get_q_value(state, action))
-        
         # Return the maximum value of the Q_value list
-        return max(Q_values) if len(Q_values) > 0 else 0
+        return max(Q_values, default=0)
 
     def choose_action(self, state, epsilon=True):
         """
@@ -163,31 +161,22 @@ class NimAI():
         options is an acceptable return value.
         """
 
-        # If epsilon is True, with probability self.epsilon choose a random available action   
         if epsilon is True and random.random() <= self.epsilon:
-
             # Return a random available action for this state
             return random.choice(list(Nim.available_actions(state)))
-        
-        # Otherwise, choose the best available action
-        # If epsilon is False, choose the best available action
-        # If epsilon is True with probability 1 - self.epsilon choose the best available action
-        else:
 
             # Create an empty actions dictionary
-            actions = dict()
+        actions = {
+            action: self.get_q_value(state, action)
+            for action in Nim.available_actions(state)
+        }
 
-            # For each available action for this state
-            for action in Nim.available_actions(state):
 
-                # Append to the actions dictionary: The action as a key and its Q-value as the value.
-                actions[action] = self.get_q_value(state, action)
-
-            # Return a random choice between the best available actions
-            # Using dictionary comprehension get a new dictionary that contains only actions with the maximum value
-            # Create a new list of the keys of this new dictionary
-            # Select a random action from this new list
-            return random.choice(list({key: value for (key, value) in actions.items() if value == max(list(actions.values()))}.keys()))
+        # Return a random choice between the best available actions
+        # Using dictionary comprehension get a new dictionary that contains only actions with the maximum value
+        # Create a new list of the keys of this new dictionary
+        # Select a random action from this new list
+        return random.choice(list({key: value for (key, value) in actions.items() if value == max(list(actions.values()))}.keys()))
        
 def train(n):
     """

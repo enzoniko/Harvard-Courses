@@ -97,7 +97,7 @@ class ViewTestCase(TestCase):
 
     def test_api_can_create_duplicate_agenda(self):
         """Testando a criacao da duplicada via post"""         
-        
+
         sala = Sala(name="Av Paulista II")
         sala.save()     
         date_init = '2019-01-05 14:00'
@@ -116,7 +116,7 @@ class ViewTestCase(TestCase):
 
         date_end = '2019-01-05 18:00'  
         agenda_data['date_end'] = date_end 
-        
+
         response = self.client.post(
             reverse('agenda'),
             agenda_data,
@@ -160,7 +160,7 @@ class ViewTestCase(TestCase):
     def test_api_can_update_duplicate_agenda(self):
         """Test the api can update duplicate given agenda."""
         agenda = Agenda.objects.get()   
-        
+
         date_init = '2019-02-05 11:00'
         date_end = '2019-02-05 12:00'   
         agenda_data = {

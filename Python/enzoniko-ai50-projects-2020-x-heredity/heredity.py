@@ -100,7 +100,7 @@ def load_data(filename):
     mother, father must both be blank, or both be valid names in the CSV.
     trait should be 0 or 1 if trait is known, blank otherwise.
     """
-    data = dict()
+    data = {}
     with open(filename) as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -235,10 +235,7 @@ def get_number_of_genes(person, one_gene, two_genes):
     # Returns the number of genes this person has
     if person in one_gene:
         return 1
-    if person in two_genes:
-        return 2
-    if person not in one_gene and person not in two_genes:
-        return 0
+    return 2 if person in two_genes else 0
 
 def get_mutation_probability(genes):
 

@@ -24,7 +24,10 @@ def main():
 
     cur = con.cursor()
 
-    cur.execute('SELECT first, middle, last, birth FROM students WHERE lower(house) = "{}" ORDER BY last, first;'.format(housename))
+    cur.execute(
+        f'SELECT first, middle, last, birth FROM students WHERE lower(house) = "{housename}" ORDER BY last, first;'
+    )
+
 
     # Fetchall gives us all the rows of the table as a list of tuples with strings.
     houseroster = cur.fetchall()
@@ -33,9 +36,9 @@ def main():
     for row in houseroster:
 
         if not row[1]:
-            print("{} {}, born {}".format(row[0], row[2], row[3]))
+            print(f"{row[0]} {row[2]}, born {row[3]}")
         else:
-            print("{} {} {}, born {}".format(row[0], row[1], row[2], row[3]))
+            print(f"{row[0]} {row[1]} {row[2]}, born {row[3]}")
 
     con.close()
 

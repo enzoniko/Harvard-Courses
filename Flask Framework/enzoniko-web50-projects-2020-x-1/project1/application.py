@@ -34,20 +34,21 @@ def index():
 def login():
     session.clear()
     username = request.form.get("username")
-    if request.method == "POST":
-        if not request.form.get("username"):
-            return render_template("error.html", message="must provide a username")
-        elif not request.form.get("password"):
-            return render_template("error.html", message="must provide a password")
-        rows = db.execute("SELECT * FROM users WHERE username = :username", {"username": username})
-        result = rows.fetchone()
-        if result == None or not check_password_hash(result[2], request.form.get("password")):
-            return render_template("error.html", message="invalid username and/or password")
-        session["user_id"] = result[0]
-        session["user_name"] = result[1]
-        return render_template("search.html")
-    else:
+    if request.method != "POST":
         return render_template("login.html")
+    if not request.form.get("username"):
+        return render_template("error.html", message="must provide a username")
+    elif not request.form.get("password"):
+        return render_template("error.html", message="must provide a password")
+    rows = db.execute("SELECT * FROM users WHERE username = :username", {"username": username})
+    result = rows.fetchone()
+    if result is None or not check_password_hash(
+        result[2], request.form.get("password")
+    ):
+        return render_template("error.html", message="invalid username and/or password")
+    session["user_id"] = result[0]
+    session["user_name"] = result[1]
+    return render_template("search.html")
 
 
 
@@ -59,25 +60,26 @@ def logout():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     session.clear()
-    if request.method == "POST":
-        if not request.form.get("username"):
-            return render_template("error.html", message="must provide a username")
-        userCheck = db.execute("SELECT * FROM users WHERE username = :username", {"username":request.form.get("username")}).fetchone()
-        if userCheck:
-            return render_template("error.html", message="username already exist")
-        elif not request.form.get("password"):
-            return render_template("error.html", message="must provide a password")
-        elif not request.form.get("confirmation"):
-            return render_template("error.html", message="must confirm your password")
-        elif not request.form.get("password") == request.form.get("confirmation"):
-            return render_template("error.html", message="passwords didn't match")
-        hashedPassword = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
-        db.execute("INSERT INTO users (username, hash) VALUES (:username, :password)", {"username": request.form.get("username"), "password": hashedPassword})
-        db.commit()
-        flash("Account created", "info")
-        return redirect("/login")
-    else:
+    if request.method != "POST":
         return render_template("register.html")
+    if not request.form.get("username"):
+        return render_template("error.html", message="must provide a username")
+    if userCheck := db.execute(
+        "SELECT * FROM users WHERE username = :username",
+        {"username": request.form.get("username")},
+    ).fetchone():
+        return render_template("error.html", message="username already exist")
+    elif not request.form.get("password"):
+        return render_template("error.html", message="must provide a password")
+    elif not request.form.get("confirmation"):
+        return render_template("error.html", message="must confirm your password")
+    elif request.form.get("password") != request.form.get("confirmation"):
+        return render_template("error.html", message="passwords didn't match")
+    hashedPassword = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
+    db.execute("INSERT INTO users (username, hash) VALUES (:username, :password)", {"username": request.form.get("username"), "password": hashedPassword})
+    db.commit()
+    flash("Account created", "info")
+    return redirect("/login")
 
 @app.route("/searching")
 @login_required
@@ -110,13 +112,13 @@ def book(isbn):
         row2 = db.execute("SELECT * FROM reviews WHERE user_id = :user_id AND book_id = :book_id", {"user_id": currentUser, "book_id": bookId})
         if row2.rowcount == 1:
             flash("You already submitted a review for this book", "warning")
-            return redirect("/book/" + isbn)
+            return redirect(f"/book/{isbn}")
         rating = int(rating)
         time = datetime.now()
         db.execute("INSERT INTO reviews(user_id, book_id, comment, rating, time) VALUES (:user_id, :book_id, :comment, :rating, :time)", {"user_id": currentUser, "book_id": bookId, "comment": comment, "rating": rating, "time": time})
         db.commit()
         flash("Review submitted!", "info")
-        return redirect("/book/" + isbn)
+        return redirect(f"/book/{isbn}")
     else:
         row = db.execute("SELECT isbn, title, author, year FROM books WHERE isbn = :isbn", {"isbn": isbn})
         bookInfo = row.fetchall()

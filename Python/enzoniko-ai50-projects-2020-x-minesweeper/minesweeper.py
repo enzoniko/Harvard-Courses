@@ -16,10 +16,8 @@ class Minesweeper():
 
         # Initialize an empty field with no mines
         self.board = []
-        for i in range(self.height):
-            row = []
-            for j in range(self.width):
-                row.append(False)
+        for _ in range(self.height):
+            row = [False for _ in range(self.width)]
             self.board.append(row)
 
         # Add mines randomly
@@ -63,17 +61,14 @@ class Minesweeper():
         count = 0
 
         # Loop over all cells within one row and column
-        for i in range(cell[0] - 1, cell[0] + 2):
-            for j in range(cell[1] - 1, cell[1] + 2):
-
-                # Ignore the cell itself
-                if (i, j) == cell:
-                    continue
+        for i, j in itertools.product(range(cell[0] - 1, cell[0] + 2), range(cell[1] - 1, cell[1] + 2)):
+            # Ignore the cell itself
+            if (i, j) == cell:
+                continue
 
                 # Update count if cell in bounds and is mine
-                if 0 <= i < self.height and 0 <= j < self.width:
-                    if self.board[i][j]:
-                        count += 1
+            if 0 <= i < self.height and 0 <= j < self.width and self.board[i][j]:
+                count += 1
 
         return count
 
@@ -112,9 +107,7 @@ class Sentence():
         """
 
         # If the number of cells in the sentence is equal to the count of mines, then all the cells are mines, returns them
-        if len(self.cells) == self.count:
-            return self.cells
-        return None
+        return self.cells if len(self.cells) == self.count else None
 
     def known_safes(self):
         """
@@ -122,9 +115,7 @@ class Sentence():
         """
 
         # If the count of mines is zero, then all the cells are safe, returns them
-        if len(self.cells) > 0 and self.count == 0:
-            return self.cells
-        return None
+        return self.cells if len(self.cells) > 0 and self.count == 0 else None
         
 
     def mark_mine(self, cell):
@@ -221,17 +212,18 @@ class MinesweeperAI():
         neighbours = []
 
         # Loop over all cells within one row and column
-        for i in range(cell[0] - 1, cell[0] + 2):
-            for j in range(cell[1] - 1, cell[1] + 2):
-
-                # Ignore the cell itself
-                if (i, j) == cell:
-                    continue
+        for i, j in itertools.product(range(cell[0] - 1, cell[0] + 2), range(cell[1] - 1, cell[1] + 2)):
+            # Ignore the cell itself
+            if (i, j) == cell:
+                continue
 
                 # Update count if cell in bounds and cell is not a move made
-                if 0 <= i < self.height and 0 <= j < self.width:
-                    if (i, j) not in self.moves_made:
-                        neighbours.append((i, j))
+            if (
+                0 <= i < self.height
+                and 0 <= j < self.width
+                and (i, j) not in self.moves_made
+            ):
+                neighbours.append((i, j))
 
         # Add new sentence to the knowledge base, this sentence contains the neighbours of the provided cell and the count of mines
         self.knowledge.append(Sentence(neighbours, count))
@@ -246,18 +238,8 @@ class MinesweeperAI():
         # print("Sentences:")
 
         # Clean up the knowledge
-        garbage = []
+        garbage = [sentence for sentence in self.knowledge if len(sentence.cells) == 0]
 
-        # For each sentence in the knowledge
-        for sentence in self.knowledge:
-
-            # If the cells set is empty append the sentence to the garbage list
-            if len(sentence.cells) == 0:
-                garbage.append(sentence)
-            
-            # Debug:
-            # print(f"{sentence.cells} = {sentence.count}")
-        
         # Remove possible duplicates from the knowledge
         # Using hash function in the Sentence class
         # I commented it for the assignment
@@ -310,31 +292,33 @@ class MinesweeperAI():
 
                     # Update self.safes with the known safes from the sentence
                     self.safes = self.safes.union(sentence.known_safes())
-                
+
                 # If there are mines in the sentence
                 if sentence.known_mines() is not None:
 
                     # Update self.mines with the known mines from the sentence
                     self.mines = self.mines.union(sentence.known_mines())
-        
-        # Empty list for temporary knowledge
-        temp_knowledge = []
 
         # If there are more than 1 sentence in the knowledge
         if len(self.knowledge) > 1:
+
+            # Empty list for temporary knowledge
+            temp_knowledge = []
 
             # For each sentence in the knowledge base
             for super_sentence in self.knowledge:
 
                 # Loops through all the sentences in the knowledge base again
-                for sub_sentence in self.knowledge:
+                temp_knowledge.extend(
+                    Sentence(
+                        super_sentence.cells.difference(sub_sentence.cells),
+                        super_sentence.count - sub_sentence.count,
+                    )
+                    for sub_sentence in self.knowledge
+                    if sub_sentence.cells.issubset(super_sentence.cells)
+                    and super_sentence != sub_sentence
+                )
 
-                    # If a sentence is subset of another sentence
-                    if sub_sentence.cells.issubset(super_sentence.cells) and super_sentence != sub_sentence:
-
-                        # Add to the temporary knowledge list a new sentence using the subset method described in the background
-                        temp_knowledge.append(Sentence(super_sentence.cells.difference(sub_sentence.cells), super_sentence.count - sub_sentence.count))
-            
             # For each sentence in the temporary knowledge list
             for temp_sentence in temp_knowledge:
 
@@ -343,7 +327,7 @@ class MinesweeperAI():
 
                     # Append the sentence
                     self.knowledge.append(temp_sentence)
-        
+
         return 1
 
     """
@@ -398,20 +382,7 @@ class MinesweeperAI():
         and self.moves_made, but should not modify any of those values.
         """
 
-        # Safes list
-        safes = []
-
-        # For each safe in self.safes, 
-        for safe in self.safes:
-
-            # Ff it is not a move that already has been made
-            if safe not in self.moves_made:
-
-                # Append to the safes list
-                safes.append(safe)
-        
-        # Returns a random move from the safes list if there are safe moves
-        if len(safes) > 0:
+        if safes := [safe for safe in self.safes if safe not in self.moves_made]:
             return random.choice(safes)
 
         # Else returns None
@@ -426,21 +397,11 @@ class MinesweeperAI():
             2) are not known to be mines
         """
         
-        # Empty available moves list
-        available_moves = []
-
-        # Loop over all cells in the board
-        for i in range(self.height):
-            for j in range(self.width):
-
-                # If the cell have not already been chosen, and is not known to be a mine
-                if (i, j) not in self.moves_made and (i, j) not in self.mines:
-
-                    # Append it to the available moves list
-                    available_moves.append((i, j))
-
-        # Returns a random move from the available moves list if there are available moves
-        if len(available_moves) > 0:
+        if available_moves := [
+            (i, j)
+            for i, j in itertools.product(range(self.height), range(self.width))
+            if (i, j) not in self.moves_made and (i, j) not in self.mines
+        ]:
             return random.choice(available_moves)
 
         # Else returns None

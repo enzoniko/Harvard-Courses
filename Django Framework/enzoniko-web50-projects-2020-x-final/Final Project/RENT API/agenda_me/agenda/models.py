@@ -28,17 +28,15 @@ class Agenda(models.Model):
         if(self.id != None):
             #NO CASO DE SE UPDATE EXCLUIR O PROPRIO ID
             agendas = agendas.exclude(id=self.id)
-        agendamentos = (len(agendas\
-            .filter(date_init__lte=date_init)\
-            .filter(date_end__gte=date_init)\
-            .filter(sala_id=sala.id))
-            +
-            len(agendas\
-            .filter(date_init__lte=date_end)\
-            .filter(date_end__gte=date_end)\
-            .filter(sala_id=sala.id))           
-            )
-        return agendamentos
+        return len(
+            agendas.filter(date_init__lte=date_init)
+            .filter(date_end__gte=date_init)
+            .filter(sala_id=sala.id)
+        ) + len(
+            agendas.filter(date_init__lte=date_end)
+            .filter(date_end__gte=date_end)
+            .filter(sala_id=sala.id)
+        )
 
     def save(self, *args, **kwargs):                
         if(self.duplicado() > 0):                 

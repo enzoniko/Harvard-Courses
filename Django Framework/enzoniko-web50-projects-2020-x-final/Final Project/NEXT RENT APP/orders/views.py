@@ -8,10 +8,10 @@ from .models import Category,Regular_pizza,Sicilian_pizza,Topping,Basquete,Têni
 import requests
 import json
 import smtplib
-from email.mime.multipart import MIMEMultipart 
-from email.mime.text import MIMEText 
-from email.mime.base import MIMEBase 
-from email import encoders 
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 import os
 from typing import Union
 import qrcode
@@ -23,7 +23,7 @@ EMAIL_PASSWORD = os.environ.get('EMAIL_PASS')
 
 # Create your views here.
 counter = Order_counter.objects.first()
-if counter==None:
+if counter is None:
     set_counter=Order_counter(counter=1)
     set_counter.save()
 superuser = User.objects.filter(is_superuser=True)
@@ -54,11 +54,10 @@ def login_view(request):
     username=request.POST["username"]
     password=request.POST["password"]
     user=authenticate(request,username=username,password=password)
-    if user is not None:
-        login(request,user)
-        return HttpResponseRedirect(reverse("index"))
-    else:
-        return render(request,"login.html",{"message":"Invalid credentials"}) 
+    if user is None:
+        return render(request,"login.html",{"message":"Invalid credentials"})
+    login(request,user)
+    return HttpResponseRedirect(reverse("index")) 
 
 def logout_view(request):
     logout(request)
@@ -84,8 +83,8 @@ def signin_view(request):
         order_number.save()
         counter.counter=counter.counter+1
         counter.save()
-        
-        
+
+
         return render(request,"login.html",{"message":"Registered. You can log in now."}) 
     return render(request,"signin.html") 
 

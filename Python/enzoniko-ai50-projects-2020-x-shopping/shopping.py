@@ -111,7 +111,7 @@ def load_data(filename):
 
                         # Append to the evidence list the cell value as a floating point number
                         evidence.append(float(row[i]))
-                    
+
                     # If the index is 10 (Month)
                     elif i == 10:
 
@@ -129,14 +129,14 @@ def load_data(filename):
 
                         # Append to the evidence list: 1 if the user visited in a weekend, otherwise append 0
                         evidence.append(1 if row[i] == "TRUE" else 0)
-                    
+
                     # All the other indexes represent an integer cell value
                     # (Administrative, Informational, ProductRelated, OperatingSystems, Browser, Region, TrafficType)
                     else:
 
                         # Append to the evidence list the cell value as an integer number
                         evidence.append(int(row[i]))
-                
+
                 # Otherwise if the index corresponds to the label 
                 else:
 
@@ -193,29 +193,26 @@ def evaluate(labels, predictions):
     for actual, predicted in zip(labels, predictions):
         
         # If the actual label is positive
-        if actual == 1:
-
-            # Increase positive variable by one
-            positive += 1
-            
-            # If the actual label is equal to the predicted label
-            if actual == predicted:
-                
-                # Increase sensitivity variable by one
-                sensitivity += 1
-        
-        # If the actual label is negative
         if actual == 0:
-            
             # Increase the negative variable by one
             negative += 1
 
             # If the actual label is equal to the predicted label
             if actual == predicted:
-                
+
                 # Increase specificity variable by one
                 specificity += 1
-    
+
+        elif actual == 1:
+            # Increase positive variable by one
+            positive += 1
+
+            # If the actual label is equal to the predicted label
+            if actual == predicted:
+
+                # Increase sensitivity variable by one
+                sensitivity += 1
+
     # Divide sensitivity by the positive variable and assign the result to sensitivity
     sensitivity /= positive
 

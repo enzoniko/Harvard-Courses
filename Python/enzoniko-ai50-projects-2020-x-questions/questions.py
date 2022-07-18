@@ -21,7 +21,7 @@ def main():
         for filename in files
     }
     file_idfs = compute_idfs(file_words)
-    
+
     # Prompt user for query
     query = set(tokenize(input("Query: ")))
 
@@ -29,12 +29,11 @@ def main():
     filenames = top_files(query, file_words, file_idfs, n=FILE_MATCHES)
 
     # Extract sentences from top files
-    sentences = dict()
+    sentences = {}
     for filename in filenames:
         for passage in files[filename].split("\n"):
             for sentence in nltk.sent_tokenize(passage):
-                tokens = tokenize(sentence)
-                if tokens:
+                if tokens := tokenize(sentence):
                     sentences[sentence] = tokens
 
     # Compute IDF values across sentences
@@ -81,7 +80,15 @@ def compute_idfs(documents):
     # Returns a dictionary that maps words to their IDF values by:
     # Using list comprehension to get all the words;
     # Using dictionary comprehension to create a dictionary where all the words are mapped to their IDF values.
-    return {word: math.log(len(documents) / sum(word in documents[filename] for filename in documents)) for word in set([word for file in list(documents.values()) for word in file])}
+    return {
+        word: math.log(
+            len(documents)
+            / sum(word in documents[filename] for filename in documents)
+        )
+        for word in {
+            word for file in list(documents.values()) for word in file
+        }
+    }
 
 
 def top_files(query, files, idfs, n):
@@ -96,7 +103,25 @@ def top_files(query, files, idfs, n):
     # Creating a zip object where the first iterable correspond to a list with each filename (made by using list comprehension) and the second iterable correspond to a list of the tf-idf values for each file (made by Using list comprehension to create a list of the summed tf-idf values for each word in the query, for each file); 
     # Sorting this zip object by the tf-idf values (index number 1 of the tuples) in descending order;
     # Using list comprehension to get only the keys of the sorted zip object and slicing the list at the n element with "[:n]".
-    return [key for key, value in sorted(zip([file for file in files], [sum([(files[file].count(word) + idfs[word] if word in idfs else files[file].count(word)) for word in query]) for file in files]), key=lambda item: item[1], reverse=True)][:n]
+    return [
+        key
+        for key, value in sorted(
+            zip(
+                list(files),
+                [
+                    sum(
+                        files[file].count(word) + idfs[word]
+                        if word in idfs
+                        else files[file].count(word)
+                        for word in query
+                    )
+                    for file in files
+                ],
+            ),
+            key=lambda item: item[1],
+            reverse=True,
+        )
+    ][:n]
 
 
 def top_sentences(query, sentences, idfs, n):
@@ -112,7 +137,29 @@ def top_sentences(query, sentences, idfs, n):
     # Creating a zip object where the first iterable corresponds to a list with each sentence (made by using list comprehension), the second iterable corresponds to a list of the idf values for each sentence (made by using list comprehension to create a list of the summed idf values for each word in the query, for each sentence) and the third iterable corresponds to a list of the term density for each sentence (made by using list comprehension to get the proportion of words in the sentence that are also words in the query, for each sentence); 
     # Sorting this zip object by the idf values (index number 1 of the tuples) and the term density values (index number 2 of the tuples) in descending order;
     # Using list comprehension to get only the first elements (index number 0 of the tuples) of the sorted zip object and slicing the list at the n element with "[:n]".
-    return [value[0] for value in sorted(zip([sentence for sentence in sentences], [sum([(idfs[word]) if word in idfs else 0 for word in query if word in sentences[sentence]]) for sentence in sentences], [(sum([word in query for word in sentences[sentence]])/len(sentences[sentence])) for sentence in sentences]), key=lambda item: (item[1], item[2]), reverse=True)][:n]
+    return [
+        value[0]
+        for value in sorted(
+            zip(
+                list(sentences),
+                [
+                    sum(
+                        (idfs[word]) if word in idfs else 0
+                        for word in query
+                        if word in sentences[sentence]
+                    )
+                    for sentence in sentences
+                ],
+                [
+                    sum(word in query for word in sentences[sentence])
+                    / len(sentences[sentence])
+                    for sentence in sentences
+                ],
+            ),
+            key=lambda item: (item[1], item[2]),
+            reverse=True,
+        )
+    ][:n]
 
 
 if __name__ == "__main__":

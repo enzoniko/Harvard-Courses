@@ -51,7 +51,7 @@ def compare():
     elif request.form.get("algorithm") == "substrings":
         if not request.form.get("length"):
             abort(400, "missing length")
-        elif not int(request.form.get("length")) > 0:
+        elif int(request.form.get("length")) <= 0:
             abort(400, "invalid length")
         regexes = [re.escape(match) for match in substrings(
             file1, file2, int(request.form.get("length")))]
@@ -75,8 +75,7 @@ def highlight(s, regexes):
         if not regex:
             continue
         matches = re.finditer(regex, s, re.MULTILINE)
-        for match in matches:
-            intervals.append((match.start(), match.end()))
+        intervals.extend((match.start(), match.end()) for match in matches)
     intervals.sort(key=lambda x: x[0])
 
     # Combine intervals to get highlighted areas
@@ -123,10 +122,7 @@ def highlight(s, regexes):
     result = ""
     for start, end, highlighted in regions:
         escaped = escape(s[start:end])
-        if highlighted:
-            result += f"<span>{escaped}</span>"
-        else:
-            result += escaped
+        result += f"<span>{escaped}</span>" if highlighted else escaped
     return result
 
 

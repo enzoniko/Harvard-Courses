@@ -16,7 +16,7 @@ def main():
     for page in sorted(ranks):
         print(f"  {page}: {ranks[page]:.4f}")
     ranks = iterate_pagerank(corpus, DAMPING)
-    print(f"PageRank Results from Iteration")
+    print("PageRank Results from Iteration")
     for page in sorted(ranks):
         print(f"  {page}: {ranks[page]:.4f}")
 
@@ -27,7 +27,7 @@ def crawl(directory):
     Return a dictionary where each key is a page, and values are
     a list of all other pages in the corpus that are linked to by the page.
     """
-    pages = dict()
+    pages = {}
 
     # Extract all links from HTML files
     for filename in os.listdir(directory):
@@ -40,10 +40,8 @@ def crawl(directory):
 
     # Only include links to other pages in the corpus
     for filename in pages:
-        pages[filename] = set(
-            link for link in pages[filename]
-            if link in pages
-        )
+        pages[filename] = {link for link in pages[filename] if link in pages}
+
 
     return pages
 
@@ -62,7 +60,7 @@ def transition_model(corpus, page, damping_factor):
     linked_pages = corpus[page]
 
     # New dictionary
-    probability_random_visit = dict()
+    probability_random_visit = {}
 
     # For each page in the corpus create a key in the new dictionary and assign it a value
     for page in corpus:
@@ -79,7 +77,7 @@ def transition_model(corpus, page, damping_factor):
 
             # The value is going to be 1 minus the damping factor divided by the number of pages in the corpus
             probability_random_visit[page] = round((1 - damping_factor) / len(corpus), 5)
-    
+
     # Returns the dictionary
     return probability_random_visit
     
@@ -93,21 +91,12 @@ def sample_pagerank(corpus, damping_factor, n):
     PageRank values should sum to 1.
     """
 
-    # Page ranks dictionary
-    pageRanks = dict()
-
-    # Samples list
-    samples = []
-
     # The page we are checking, start with a page at random
     page = random.choice(list(corpus.keys()))
 
-    # Append the page to the samples list
-    samples.append(page)
-
+    samples = [page]
     # Do a loop over the number of samples we want, it starts with zero so it is n - 1
-    for sample in range(n - 1):
-
+    for _ in range(n - 1):
         # Probabilities for the next page given the current page to the transition model
         probability_distribution_for_page = transition_model(corpus, page, damping_factor)
 
@@ -119,15 +108,9 @@ def sample_pagerank(corpus, damping_factor, n):
 
         # Append the new page to the samples list
         samples.append(page)
-    
-    # For each page in the corpus
-    for key in corpus.keys():
 
-        # Create a key in the pageranks dictionary with the name of the page and the number of times this page appears in the samples list divided by the number of samples so it is a value between 0 and 1 
-        pageRanks[key] = samples.count(key) / n
-    
     # Returns the page ranks
-    return pageRanks
+    return {key: samples.count(key) / n for key in corpus.keys()}
 
 def iterate_pagerank(corpus, damping_factor):
     """
@@ -140,13 +123,10 @@ def iterate_pagerank(corpus, damping_factor):
     """
 
     # Page ranks dictionary
-    pageRanks = dict()
+    pageRanks = {
+        page: 1 / len(list(corpus.keys())) for page in list(corpus.keys())
+    }
 
-    # For each page in the corpus
-    for page in list(corpus.keys()):
-        
-        # Create a key in the page ranks dictionary with the name of the page and 1 divided by the number of pages as the value to start with
-        pageRanks[page] = 1 / len(list(corpus.keys()))
 
     # Converged starts as false
     converged = False
@@ -158,7 +138,7 @@ def iterate_pagerank(corpus, damping_factor):
         previous_page_ranks = dict(pageRanks)
 
         # Initialize a list with the page ranks difference
-        page_ranks_difference = list()
+        page_ranks_difference = []
 
         # For each page in the corpus
         for sub_page in list(corpus.keys()):
@@ -173,7 +153,7 @@ def iterate_pagerank(corpus, damping_factor):
 
             # For each page in the corpus again
             for super_page in list(corpus.keys()):
-                
+
                 # But this time only if we are checking different pages
                 if super_page != sub_page:
 
@@ -190,11 +170,11 @@ def iterate_pagerank(corpus, damping_factor):
 
                         # Add to the partial probabilities var 1 divided by the number of pages
                         partial_probabilities += 1 / len(corpus.keys())
-    
+
             # Create a key in the page ranks dictionary with the name of the super page and the result of the formula as the value
             # Formula: PAGE_RANK(PAGE) = 1 - DAMPING_FACTOR / NUMBER OF PAGES + DAMPING_FACTOR * partial_probabilities
             pageRanks[sub_page] = (1 - damping_factor) / len(corpus.keys()) + (damping_factor * partial_probabilities)
-            
+
             # Appends the difference between the previous and the current page rank for the sub page to the page ranks difference list
             page_ranks_difference.append(abs(previous_page_ranks[sub_page] - pageRanks[sub_page]))
 
@@ -206,7 +186,7 @@ def iterate_pagerank(corpus, damping_factor):
 
                 # The values converged
                 converged = True
-    
+
     # Returns the page ranks
     return pageRanks
 
